@@ -1,31 +1,81 @@
 @font-face {
+  /* importação da font do figma */
   font-family: 'averia-libre';
   src: url('/assets/fonts/averia-libre.ttf');
 }
 
 :root {
+  /* variáveis  */
   --bg-cyan: #8FE1D9;
   --text-blue: #419ED7;
   --btn-blue: #419ED7;
 }
 
+/* body geral */
 body {
+  /* font do figma */
   font-family: 'averia-libre';
+  /* remove/reset as margens e espaçamento do corpo do site */
   margin: 0;
   padding: 0;
+  min-height: 100%;
+}
+
+/* for all elements set default font family averia-libre */
+* {
+  font-family: 'averia-libre';
+}
+
+body.signin, body.signup, body.recovery {
+  background-color: #ADD4D0;
+}
+
+/* body da home */
+body.home {
+  /* importação e configuração da imagem de plano de fundo do figma */
   background-image: url('/assets/images/vaccine-background.jpeg');
   background-repeat: no-repeat;
   background-size: cover;
+  background-position-y: top;
 }
 
-body:after {
+body.home:after {
   content: '';
   position: absolute;
   width: 100%;
   height: 100%;
   top: 0;
   left: 0;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.48) 46.4%, rgba(255, 255, 255, 0) 100%);
+  z-index: -2;
+  background-image: linear-gradient(
+    rgba(255, 255, 255, 0.24) 0%,
+    rgba(255, 255, 255, 0.48) 46.4%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  fill: #829896;
+  z-index: -2;
+}
+
+body.home:before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #829896;
+  opacity: 0.15;
+  z-index: -1;
+}
+
+#app {
+  display: block;
+  z-index: 2;
+  /* min-height: 100vh; */
+}
+
+.hidden-page {
+  display: none;
 }
 
 .header {
@@ -64,6 +114,10 @@ body:after {
   filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 }
 
+.button-shadow {
+  filter: drop-shadow(0px 6px 4px rgba(0, 0, 0, 0.25));
+}
+
 .navbar ul {
   list-style: none;
 }
@@ -75,7 +129,6 @@ body:after {
 main {
   display: flex;
   flex-direction: row;
-  background: linear-gradient(179.55deg, rgba(255, 255, 255, 0.24) 15.85%, rgba(255, 255, 255, 0.48) 40.1%, rgba(255, 255, 255, 0) 68.12%);
 }
 
 .main-home {
@@ -84,7 +137,14 @@ main {
   text-align: center;
 }
 
+.container {
+  margin: 0 500px;
+}
+
 .home-section {
+  width: 100%;
+  margin-top: 250px;
+  color: #419ED7;
 }
 
 section > .section-title {
@@ -92,6 +152,131 @@ section > .section-title {
   color: var(--text-blue);
 }
 
-section > .section-button {
+.home-section > h2 {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
 
+.section-form {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  z-index: -1;
+}
+
+.input-group {  
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 5px 0;
+}
+
+.input-center {
+  justify-content: center;
+}
+
+.input-group > label {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+  white-space: nowrap;
+  margin-left: auto;
+  color: white;
+  font-size: 18px;
+}
+
+.input-group > div {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin-right: auto;
+  color: white;
+  font-size: 18px;
+  margin-right: 125px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.input-group > input {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: none;
+  width: 320px;
+  padding: 5px 5px;
+  margin: 5px 0;
+  font-size: 18px;
+  color: #3F92C5;
+}
+
+.input-group > input[type="date"] {
+  display: flex;
+  width: 210px;
+  align-items: flex-start;
+  margin-right: 110px;
+}
+
+.input-error {
+  display: flex;
+  justify-content: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.text-error {
+  color: #FD7979;
+  font-size: 16px;
+}
+
+.forget-password {
+  display: flex;
+  flex-direction: row;
+  margin-top: 100px;
+}
+
+.forget-password > a {
+  color: #419ED7;
+}
+
+.form-button {
+  display: flex;
+  margin: 0 auto;
+  border: none;
+  background-color: #37BD6D;
+  padding: 15px 60px;
+  font-size: 18px;
+  color: white;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+.gener-inputs > label {
+  color: white;
+}
+
+input[type="date"] {
+  background-image: urL("/assets/images/icon.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position-x: right;
+  background-origin: content-box;
+}
+
+input[type="radio"] {
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  background-color: white;
+  outline: 2px solid white;
+  border-radius: 50%;
+  margin: 0 6px;
+  cursor: pointer;
+}
+
+input[type="radio"]:checked {
+  background-color: #419ED7;
 }
