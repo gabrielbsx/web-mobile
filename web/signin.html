@@ -19,7 +19,7 @@
         </header>
         <main>
           <section class="section-form">
-            <form onsubmit="signInController(event);">
+            <form onsubmit="signInHandle(event);">
               <div class="input-group">
                 <label for="email">E-mail</label>
                 <input id="email" type="email" name="email" placeholder="jurandir.pereira@hotmail.com" />
@@ -29,7 +29,7 @@
                 <input id="senha" type="password" name="password" placeholder="************" />
               </div>
               <div class="input-group input-error">
-                <small class="text-error">E-mail e/ou senha inválidos.</small>
+                <!-- <small class="text-error">E-mail e/ou senha inválidos.</small> -->
               </div>
               <div>
                 <button class="form-button" type="submit">
@@ -38,12 +38,16 @@
               </div>
             </form>
             <div class="forget-password">
-              <a href="forget.html">Esqueci minha senha</a>
+              <a href="recovery.html">Esqueci minha senha</a>
             </div>
           </section>
         </main>
       </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
     <script src="/assets/js/app.js"></script>
   </body>
 </html>

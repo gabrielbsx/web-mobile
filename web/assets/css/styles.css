@@ -162,6 +162,7 @@ section > .section-title {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
   width: 100vw;
   height: 100vh;
   top: 0;
@@ -204,7 +205,6 @@ section > .section-title {
 
 .input-group > input {
   display: flex;
-  flex-direction: column;
   background-color: white;
   border: none;
   width: 320px;
@@ -222,10 +222,14 @@ section > .section-title {
 }
 
 .input-error {
+  position: absolute;
   display: flex;
-  justify-content: center;
+  left: 0;
+  flex-direction: row;
   margin-top: 0;
   margin-bottom: 20px;
+  width: 100vw;
+  justify-content: center;
 }
 
 .text-error {
@@ -243,12 +247,16 @@ section > .section-title {
   color: #419ED7;
 }
 
+.input-submit {
+  margin-top: 40px;
+}
+
 .form-button {
   display: flex;
   margin: 0 auto;
   border: none;
   background-color: #37BD6D;
-  padding: 15px 60px;
+  padding: 5px 30px;
   font-size: 18px;
   color: white;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
@@ -266,6 +274,10 @@ input[type="date"] {
   background-origin: content-box;
 }
 
+input::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
 input[type="radio"] {
   appearance: none;
   width: 15px;
@@ -279,4 +291,72 @@ input[type="radio"] {
 
 input[type="radio"]:checked {
   background-color: #419ED7;
+}
+
+.container-fluid {
+  margin: 10px 40px;
+}
+
+.section-vaccine {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 5px 40px;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.search-input {
+  flex-direction: row;
+  border: 1px solid black;
+  padding: 10px 10px 10px 60px;
+  width: 100%;
+  font-size: 14pt;
+  text-transform: uppercase;
+  background-image: url("/assets/images/icon-search.png");
+  background-repeat: no-repeat;
+  background-position-x: 10px;
+  background-position-y: center;
+}
+
+.margin-top-10 {
+  margin-top: 50px;
+}
+
+.block {
+  display: block;
+}
+
+.container {
+  margin-left: 100px;
+  margin-right: 100px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 50px;
+}
+
+.card {
+  background: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+.card > article > header > h2 {
+  color: #3F92C5;
 }

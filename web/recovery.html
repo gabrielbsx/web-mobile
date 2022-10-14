@@ -19,15 +19,15 @@
         </header>
         <main>
           <section class="section-form">
-            <form onsubmit="signInController(event);">
+            <form onsubmit="recoveryHandle(event);">
               <div class="input-group">
                   <label>E-mail</label>
                   <input type="email" name="email" placeholder="jurandir.pereira@hotmail.com" />
               </div>
-              <div class="input-group input-error">
-                <small class="text-error">E-mail e/ou senha inválidos.</small>
+              <div class="input-error">
+                <!-- <small class="text-error">E-mail e/ou senha inválidos.</small> -->
               </div>
-              <div class="input-group input-center">
+              <div class="input-group input-submit input-center">
                 <button class="form-button" type="submit">
                   Redifinir senha
                 </button>
@@ -37,6 +37,10 @@
         </main>
       </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
     <script src="/assets/js/app.js"></script>
   </body>
 </html>

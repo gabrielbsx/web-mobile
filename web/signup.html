@@ -19,7 +19,7 @@
         </header>
         <main>
           <section class="section-form">
-            <form onsubmit="signInController(event);">
+            <form onsubmit="signUpHandle(event);">
               <div class="input-group">
                   <label for="nome">Nome completo</label>
                   <input id="nome" type="text" name="nome" placeholder="Jurandir Pereira" />
@@ -47,10 +47,10 @@
               </div>
               <div class="input-group">
                   <label>Repetir senha</label>
-                  <input type="password" name="password" placeholder="************" />
+                  <input type="password" name="passwordConfirm" placeholder="************" />
               </div>
               <div class="input-group input-error">
-                <small class="text-error">E-mail e/ou senha inválidos.</small>
+                <!-- <small class="text-error">E-mail e/ou senha inválidos.</small> -->
               </div>
               <div class="input-group input-center">
                 <button class="form-button" type="submit">
@@ -62,6 +62,10 @@
         </main>
       </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
     <script src="/assets/js/app.js"></script>
   </body>
 </html>
