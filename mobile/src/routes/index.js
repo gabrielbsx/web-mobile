@@ -34,7 +34,7 @@ function Navigator() {
     }
   }, []);
 
-  const onHandleSignOu = ({navigation}) => {
+  const onHandleSignOut = ({navigation}) => {
     setUser(null);
     AsyncStorage.removeItem('user');
     navigation.closeDrawer();
@@ -86,7 +86,7 @@ function Navigator() {
               })}
               <TouchableOpacity
                 style={styles.drawerItem}
-                onPress={() => onHandleSignOu(props)}>
+                onPress={() => onHandleSignOut(props)}>
                 <ImageBackground source={LogOutIcon} style={styles.icon} />
                 <Text style={styles.button}>Sair</Text>
               </TouchableOpacity>
