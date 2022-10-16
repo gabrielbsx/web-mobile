@@ -99,4 +99,9 @@ export default StyleSheet.create({
   formButtonForget: {
     width: 200,
   },
+  error: {
+    color: '#FD7979',
+    fontFamily: 'averia-libre',
+    alignSelf: 'center',
+  },
 });

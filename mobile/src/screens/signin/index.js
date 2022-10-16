@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Button,
   ImageBackground,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -11,10 +12,30 @@ import backgroundImage from '../../assets/images/vaccine-background.jpeg';
 import iconVaccine from '../../assets/images/icon-vaccine.png';
 import styles from './styles';
 import LinearGradient from 'react-native-linear-gradient';
+import SignInController from '../../controllers/signin-controller';
 
-function SignIn({navigation}) {
+function SignIn({navigation, setUser}) {
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [error, setError] = useState();
+
+  const onHandleSubmit = async () => {
+    const signInController = new SignInController();
+    signInController.setEmail(email);
+    signInController.setPassword(password);
+    try {
+      setError('');
+      signInController.validateOrThrow();
+      const {user} = await signInController.handle();
+      setUser(user);
+    } catch (e) {
+      console.log(e);
+      setError(e.message);
+    }
+  };
+
   return (
-    <View>
+    <ScrollView>
       <ImageBackground
         style={styles.bgImage}
         resizeMode="cover"
@@ -49,20 +70,23 @@ function SignIn({navigation}) {
           <View style={styles.formGroup}>
             <Text style={styles.formLabel}>E-mail</Text>
             <TextInput
+              onChangeText={text => setEmail(text)}
               placeholder="jurandir.pereira@hotmail.com"
               placeholderTextColor="#3F92C5"
               style={styles.formInput}
             />
           </View>
           <View style={styles.formGroup}>
-            <Text style={styles.formLabel}>E-mail</Text>
+            <Text style={styles.formLabel}>Senha</Text>
             <TextInput
-              type="password"
+              onChangeText={text => setPassword(text)}
+              secureTextEntry={true}
               placeholder="***********"
               placeholderTextColor="#3F92C5"
               style={styles.formInput}
             />
           </View>
+          {error && <Text style={styles.error}>{error}</Text>}
         </View>
         <View style={styles.buttonContainer}>
           <View style={styles.formButtonGroup}>
@@ -71,9 +95,7 @@ function SignIn({navigation}) {
                 title="Entrar"
                 color="#49B976"
                 style={styles.formButtonEnter}
-                onPress={() => {
-                  console.log('hello there!');
-                }}
+                onPress={onHandleSubmit}
               />
             </View>
           </View>
@@ -97,7 +119,7 @@ function SignIn({navigation}) {
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
