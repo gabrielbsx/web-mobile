@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {Button, ScrollView, Text, TextInput, View} from 'react-native';
+import {
+  Button,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import HeaderGuest from '../../components/header-guest';
 import ForgetPasswordController from '../../controllers/forgetpassword-controller';
 import styles from './styles';

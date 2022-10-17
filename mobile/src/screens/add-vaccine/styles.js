@@ -3,22 +3,23 @@ import {Dimensions, StyleSheet} from 'react-native';
 export default StyleSheet.create({
   container: {
     display: 'flex',
+    backgroundColor: '#ADD4D0',
+    flex: 1,
+    padding: 5,
     minWidth: Dimensions.get('window').width,
     minHeight: Dimensions.get('window').height,
-    backgroundColor: '#ADD4D0',
   },
   formContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    marginTop: 50,
     flex: 1,
   },
   formGroup: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
     marginHorizontal: 10,
-    flex: 2,
   },
   inputGroup: {
     display: 'flex',
@@ -30,7 +31,7 @@ export default StyleSheet.create({
     display: 'flex',
     fontSize: 16,
     color: 'white',
-    width: 120,
+    width: 140,
     fontFamily: 'averia-libre',
     textAlign: 'right',
     marginRight: 10,
@@ -41,28 +42,30 @@ export default StyleSheet.create({
     backgroundColor: 'white',
     fontFamily: 'averia-libre',
     fontSize: 16,
-    width: 240,
+    width: 235,
     height: 40,
     color: '#3F92C5',
-  },
-  gender: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: 240,
-  },
-  genderText: {
-    color: 'white',
-    fontSize: 18,
   },
   radioGroup: {
     display: 'flex',
     flexDirection: 'row',
-    width: 240,
+    width: 235,
+    flexWrap: 'wrap',
+  },
+  labelRadio: {
+    display: 'flex',
+    fontSize: 16,
+    color: 'white',
+    width: 140,
+    fontFamily: 'averia-libre',
+    textAlign: 'right',
+    marginRight: 10,
+    alignSelf: 'flex-start',
   },
   radioLabel: {
     color: 'white',
     fontSize: 16,
+    marginBottom: 10,
   },
   radioInput: {
     display: 'flex',
@@ -72,6 +75,7 @@ export default StyleSheet.create({
     color: '#3F92C5',
     borderRadius: 100,
     marginRight: 10,
+    marginBottom: 10,
   },
   radioInputChecked: {
     display: 'flex',
@@ -83,18 +87,13 @@ export default StyleSheet.create({
     borderWidth: 2,
     borderColor: 'white',
     marginRight: 10,
+    marginBottom: 10,
   },
   radioInputGroup: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 20,
-  },
-  buttonGroup: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'center',
-    width: 140,
   },
   iconCalendar: {
     display: 'flex',
@@ -111,7 +110,7 @@ export default StyleSheet.create({
     fontFamily: 'averia-libre',
     backgroundColor: 'white',
     borderWidth: 0,
-    width: 200,
+    width: 180,
   },
   labelCalendar: {
     display: 'flex',
@@ -119,11 +118,40 @@ export default StyleSheet.create({
     color: '#3F92C5',
     fontFamily: 'averia-libre',
   },
-  errorGroup: {
+  containerButton: {
     display: 'flex',
-    alignItems: 'center',
+    width: 140,
+    alignSelf: 'center',
+    flex: 2,
   },
-  errorText: {
-    color: '#FD7979',
+  labelProof: {
+    display: 'flex',
+    fontSize: 16,
+    color: 'white',
+    width: 140,
+    fontFamily: 'averia-libre',
+    textAlign: 'right',
+    marginRight: 10,
+    alignSelf: 'flex-start',
+  },
+  proof: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    minHeight: 140,
+  },
+  proofButton: {
+    display: 'flex',
+    width: 200,
+  },
+  proofImage: {
+    display: 'flex',
+    marginTop: 10,
+    flex: 1,
+    minHeight: 110,
+  },
+  error: {
+    display: 'flex',
+    color: 'red',
   },
 });

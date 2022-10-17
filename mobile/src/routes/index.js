@@ -21,22 +21,32 @@ import styles from './styles';
 import LogOutIcon from '../assets/images/icon-logout.png';
 import CalendarIcon from '../assets/images/icon-calendar.png';
 import VaccineIcon from '../assets/images/icon-vaccine.png';
+import AddVaccine from '../screens/add-vaccine';
+import {getAuth, onAuthStateChanged, signOut} from 'firebase/auth';
+import {app, auth} from '../services/firebase';
+import EditVaccine from '../screens/edit-vaccine';
 
 const Drawer = createDrawerNavigator();
 
 function Navigator() {
   const [user, setUser] = useState(null);
+  const [vaccine, setVaccine] = useState([]);
 
   useEffect(() => {
-    const userData = AsyncStorage.getItem('user');
-    if (userData) {
-      setUser(userData);
-    }
+    // const userData = AsyncStorage.getItem('user');
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
   }, []);
 
   const onHandleSignOut = ({navigation}) => {
     setUser(null);
     AsyncStorage.removeItem('user');
+    signOut(auth);
     navigation.closeDrawer();
   };
 
@@ -63,7 +73,7 @@ function Navigator() {
                 let icon;
                 let title = '';
                 switch (route) {
-                  case 'Home':
+                  case 'Home' || 'AddVaccine' || 'UpdateVaccine':
                     title = 'Minhas vacinas';
                     icon = VaccineIcon;
                     break;
@@ -95,11 +105,12 @@ function Navigator() {
           {[
             {name: 'Home', component: Home},
             {name: 'Vaccine', component: Home},
+            {name: 'AddVaccine', component: AddVaccine},
+            {name: 'EditVaccine', component: EditVaccine},
           ].map((route, index) => (
             <Drawer.Screen
               key={index}
               name={route.name}
-              component={route.component}
               options={{
                 title: 'Minhas vacinas',
                 headerTitleStyle: {
@@ -111,8 +122,15 @@ function Navigator() {
                 headerStyle: {
                   backgroundColor: '#C1E7E3',
                 },
-              }}
-            />
+              }}>
+              {props => (
+                <route.component
+                  {...props}
+                  vaccines={vaccine}
+                  setVaccine={setVaccine}
+                />
+              )}
+            </Drawer.Screen>
           ))}
         </Drawer.Navigator>
       </NavigationContainer>

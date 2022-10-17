@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Button,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import iconCalendar from '../../assets/images/icon-calendar.png';

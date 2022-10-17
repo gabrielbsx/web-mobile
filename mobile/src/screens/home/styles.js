@@ -7,7 +7,10 @@ export default StyleSheet.create({
     padding: 5,
   },
   list: {
-    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    // flex: 1,
+    // flexWrap: 'wrap',
   },
   card: {
     display: 'flex',
@@ -17,7 +20,7 @@ export default StyleSheet.create({
     margin: 5,
     paddingHorizontal: 10,
     paddingTop: 10,
-    flex: 1,
+    width: 190,
   },
   searchContainer: {
     display: 'flex',

@@ -4,8 +4,11 @@ import {
   Button,
   FlatList,
   ImageBackground,
+  SafeAreaView,
+  ScrollView,
   Text,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import styles from './styles';
@@ -13,30 +16,9 @@ import {app, auth, db} from '../../services/firebase';
 import {doc, runTransaction} from 'firebase/firestore';
 import VaccineProofImage from '../../assets/images/image-comprovante.png';
 import SearchIcon from '../../assets/images/icon-search.png';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-function Home() {
-  const [vaccines, setVaccines] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const example = {
-        name: 'Vacina 3',
-        dose: '1ª dose',
-        date: new Date(),
-        nextDateDose: new Date(),
-      };
-      const vacs = [];
-      for (let i = 0; i < 4; i++) {
-        vacs.push({
-          id: i + 1,
-          ...example,
-        });
-      }
-      setVaccines(vacs);
-    };
-    fetchData();
-  }, []);
-
+function Home({navigation, vaccines, setVaccine}) {
   const getNextDoseText = nextDose => {
     if (!nextDose) {
       return 'Não há próxima dose';
@@ -47,6 +29,10 @@ function Home() {
     return `Próxima dose: ${day.toString().padStart(2, '0')}/${month
       .toString()
       .padStart(2, '0')}/${year}`;
+  };
+
+  const onHandleEdit = id => {
+    navigation.navigate('EditVaccine', {vaccineId: id});
   };
 
   return (
@@ -69,64 +55,48 @@ function Home() {
         data={vaccines}
         renderItem={({item}) => {
           return (
-            <View style={styles.card} key={item.id}>
-              <Text style={styles.cardName}>{item.name}</Text>
-              <Text style={styles.cardDose}>{item.dose}</Text>
-              <Text style={styles.cardDate}>
-                {item.date.getDate().toString().padStart(2, '0')}/
-                {(item.date.getMonth() + 1).toString().padStart(2, '0')}/
-                {item.date.getFullYear()}
-              </Text>
-              <View style={styles.cardProof}>
-                <ImageBackground
-                  style={styles.cardImageProof}
-                  source={VaccineProofImage}
-                  resizeMode="cover"
-                />
+            <TouchableWithoutFeedback onPress={() => onHandleEdit(item.id)}>
+              <View style={styles.card} key={item.id}>
+                <Text style={styles.cardName}>{item.name}</Text>
+                <Text style={styles.cardDose}>{item.dose}</Text>
+                <Text style={styles.cardDate}>
+                  {item.date.getDate().toString().padStart(2, '0')}/
+                  {(item.date.getMonth() + 1).toString().padStart(2, '0')}/
+                  {item.date.getFullYear()}
+                </Text>
+                <View style={styles.cardProof}>
+                  <ImageBackground
+                    style={styles.cardImageProof}
+                    source={{uri: item.proof}}
+                    resizeMode="cover"
+                  />
+                </View>
+                <Text style={styles.nextDateDose}>
+                  {getNextDoseText(item.nextDateDose)}
+                </Text>
               </View>
-              <Text style={styles.nextDateDose}>
-                {getNextDoseText(item.nextDateDose)}
-              </Text>
-            </View>
+            </TouchableWithoutFeedback>
           );
         }}
         keyExtractor={item => item.id}
         numColumns={2}
         onEndReachedThreshold={0.1}
         onEndReached={() => {
-          const fetchData = async () => {
-            const example = {
-              name: 'Vacina 3',
-              dose: '1ª dose',
-              date: new Date(),
-              nextDateDose: new Date(),
-            };
-            const vacs = [];
-            for (let i = 0; i < 4; i++) {
-              vacs.push({
-                id: i + 1 + vaccines.length,
-                ...example,
-              });
-            }
-            setVaccines([...vaccines, ...vacs]);
-          };
-          fetchData();
+          console.log('onEndReached');
         }}
-        ListFooterComponent={() => {
-          return (
-            <View style={styles.spinner}>
-              <ActivityIndicator size="large" color="#3F92C5" />
-            </View>
-          );
-        }}
+        // ListFooterComponent={() => {
+        //   return (
+        //     <View style={styles.spinner}>
+        //       <ActivityIndicator size="large" color="#3F92C5" />
+        //     </View>
+        //   );
+        // }}
       />
       <View style={styles.containerButton}>
         <Button
           color="#49B976"
           title="Nova vacina"
-          onPress={() => {
-            console.log('teste');
-          }}
+          onPress={() => navigation.navigate('AddVaccine')}
         />
       </View>
     </View>
