@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -47,6 +47,20 @@ function SignUp({navigation, setUser}) {
     }
   };
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setName();
+      setGender();
+      setBorn(new Date());
+      setEmail('');
+      setPassword('');
+      setPasswordConfirmation('');
+      setPicker(false);
+      setError();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -56,6 +70,7 @@ function SignUp({navigation, setUser}) {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Nome completo</Text>
               <TextInput
+                value={name}
                 onChangeText={text => setName(text)}
                 style={styles.input}
                 placeholderTextColor="#3F92C5"
@@ -135,6 +150,7 @@ function SignUp({navigation, setUser}) {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Senha</Text>
               <TextInput
+                value={password}
                 onChangeText={text => setPassword(text)}
                 style={styles.input}
                 secureTextEntry={true}
@@ -145,6 +161,7 @@ function SignUp({navigation, setUser}) {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Repetir senha</Text>
               <TextInput
+                value={passwordConfirmation}
                 onChangeText={text => setPasswordConfirmation(text)}
                 style={styles.input}
                 secureTextEntry={true}

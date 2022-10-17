@@ -43,6 +43,16 @@ export default class EditVaccineController {
   }
 
   async edit() {
+    if (this.dose === 'Dose única') {
+      this.nextDateDose = null;
+      this.requiredFields.splice(
+        this.requiredFields.indexOf('nextDateDose'),
+        1,
+      );
+    } else if (!this.requiredFields.includes('nextDateDose')) {
+      this.requiredFields.push('nextDateDose');
+    }
+
     for (const field of this.requiredFields) {
       if (!this[field]) {
         throw new Error(`O campo ${this.fieldsTranslate[field]} é obrigatório`);

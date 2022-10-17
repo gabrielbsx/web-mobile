@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Button,
   SafeAreaView,
@@ -15,17 +15,31 @@ function ForgetPassword({navigation}) {
   const [email, setEmail] = useState();
   const [error, setError] = useState();
 
-  const onHandleSubmit = () => {
+  const onHandleSubmit = async () => {
     const forgetPasswordController = new ForgetPasswordController();
     forgetPasswordController.setEmail(email);
 
     try {
-      forgetPasswordController.validateOrThrow();
       setError('');
+      forgetPasswordController.validateOrThrow();
+      const isRecovery = await forgetPasswordController.recovery();
+      if (isRecovery) {
+        navigation.navigate('SignIn');
+      } else {
+        setError('Erro ao recuperar a senha');
+      }
     } catch (e) {
       setError(e.message);
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setEmail();
+      setError();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <ScrollView>
@@ -36,6 +50,7 @@ function ForgetPassword({navigation}) {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>E-mail</Text>
               <TextInput
+                value={email}
                 onChangeText={text => setEmail(text)}
                 style={styles.input}
                 placeholderTextColor="#3F92C5"

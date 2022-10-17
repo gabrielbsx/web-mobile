@@ -25,6 +25,7 @@ import AddVaccine from '../screens/add-vaccine';
 import {getAuth, onAuthStateChanged, signOut} from 'firebase/auth';
 import {app, auth} from '../services/firebase';
 import EditVaccine from '../screens/edit-vaccine';
+import NextVaccines from '../screens/next-vaccines';
 
 const Drawer = createDrawerNavigator();
 
@@ -81,6 +82,8 @@ function Navigator() {
                     title = 'Próximas vacinas';
                     icon = CalendarIcon;
                     break;
+                  default:
+                    return null;
                 }
                 return (
                   <TouchableOpacity
@@ -104,7 +107,7 @@ function Navigator() {
           )}>
           {[
             {name: 'Home', component: Home},
-            {name: 'Vaccine', component: Home},
+            {name: 'Vaccine', component: NextVaccines},
             {name: 'AddVaccine', component: AddVaccine},
             {name: 'EditVaccine', component: EditVaccine},
           ].map((route, index) => (
@@ -126,7 +129,7 @@ function Navigator() {
               {props => (
                 <route.component
                   {...props}
-                  vaccines={vaccine}
+                  vaccines={vaccine.filter(vac => vac.userId === user.uid)}
                   setVaccine={setVaccine}
                 />
               )}

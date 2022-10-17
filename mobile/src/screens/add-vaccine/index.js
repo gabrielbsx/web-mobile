@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Button,
   Image,
@@ -25,6 +25,7 @@ function AddVaccine({navigation, vaccines, setVaccine}) {
   const [nextDateDose, setNextDateDose] = useState();
   const [picker, setPicker] = useState(false);
   const [error, setError] = useState();
+  // const [addVaccine, setAddVaccine] = useState();
 
   const onHandleUploadImage = async (setImage, image) => {
     launchImageLibrary({mediaType: 'photo'}, response => {
@@ -39,6 +40,19 @@ function AddVaccine({navigation, vaccines, setVaccine}) {
       }
     });
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setName();
+      setDose();
+      setProof();
+      setDate();
+      setNextDateDose();
+      setPicker(false);
+      setError();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const onHandleSubmit = async () => {
     try {

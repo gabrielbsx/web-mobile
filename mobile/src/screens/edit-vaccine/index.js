@@ -76,6 +76,7 @@ function EditVaccine({route, navigation, vaccines, setVaccine}) {
     );
     console.log(vaccineWithoutDeleted);
     setVaccine(vaccineWithoutDeleted);
+    setModal(false);
     // navigation.navigate('Home');
   };
 

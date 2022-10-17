@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Button,
   ImageBackground,
@@ -34,6 +34,15 @@ function SignIn({navigation, setUser}) {
       setError(e.message);
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setEmail('');
+      setPassword('');
+      setError();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <ScrollView>
