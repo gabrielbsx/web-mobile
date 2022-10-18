@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <title>Health</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Gabriel">
+    <meta name="description" content="primeiro desáfio">
+    <meta name="keywords" content="curso, de, html, udemy">
+    <link rel="stylesheet" type="text/css" href="/assets/css/styles.css">
+    <script type="module" src="/assets/js/app.js?v=10"></script>
+  </head>
+  <body class="editvaccine">
+    <div class="modal hidden">
+      <div class="modal-box">
+        <span>
+          Tem certeza que deseja remover essa vacina?
+        </span>
+        <footer>
+          <button class="button-danger shadow" id="deletevac">SIM</button>
+          <button class="button shadow" id="cancel">CANCELAR</button>
+        </footer>
+      </div>
+    </div>
+    <div id="app">
+      <div page="edit-vaccine">
+        <header class="header">
+          <a class="logo" href="vaccine.html">
+            <img src="/assets/images/icon-vaccine.png" alt="logo" />
+            <span>MyHealth</span>
+          </a>  
+        </header>
+        <main>
+          <div class="section-button-delete">
+            <button href="#deletevaccine" class="button-danger shadow">
+              <img src="/assets/images/trash.png" alt="icon-delete" />
+              Excluir
+            </button>
+          </div>
+          <section class="section-form">
+            <div>
+            <!-- <form onsubmit="signUpHandle(event);"> -->
+              <div class="input-group">
+                  <label for="date-vaccine">Data de vacinação</label>
+                  <input class="form-vaccine" type="date" name="datevaccine" />
+              </div>
+              <div class="input-group">
+                <label for="vaccine">Vacina</label>
+                <input type="text" name="vaccine" placeholder="Hepatite B" />
+              </div>
+              <div class="input-group">
+                  <label for="dose">Dose</label>
+                  <div id="dose">
+                    <input id="dose-1" type="radio" name="dose" value="1ª Dose" />
+                    <label for="dose-1">1ª dose</label>
+                    <input id="dose-2" type="radio" name="dose" value="2ª Dose" />
+                    <label for="dose-2">2ª Dose</label>
+                    <input id="dose-3" type="radio" name="dose" value="3ª Dose" />
+                    <label for="dose-3">3ª Dose</label>
+                    <input id="dose-unique" type="radio" name="dose" value="Dose única" />
+                    <label for="dose-unique">Dose única</label>
+                  </div>
+              </div>
+              <div class="input-group input-proof">
+                  <label for="proof">Comprovante da vacinação</label>
+                  <div class="input-button-group">
+                    <label class="proof-button shadow" href="#add-proof-upload">
+                      Selecionar imagem...
+                      <input class="input-button-file" type="file" name="proof" />
+                    </label>
+                  </div>
+                </div>
+              <div class="input-group image-preview-div">
+                <!-- <img class="image-preview" src="/assets/images/image-comprovante.png" alt="" /> -->
+              </div>
+              <div class="input-group">
+                <label for="next-date-vaccine">Próxima vacinação</label>
+                <input class="form-vaccine" type="date" name="nextdatevaccine" />
+              </div>
+              <div class="input-group input-error">
+                <!-- <small class="text-error">E-mail e/ou senha inválidos.</small> -->
+              </div>
+              <div class="input-group vaccine-button-handle input-center">
+                <button href="#editvaccine" class="form-button">
+                  Salvar alterações
+                </button>
+              </div>
+            <!-- </form> -->
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

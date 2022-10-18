@@ -7,42 +7,42 @@
     <meta name="description" content="primeiro desáfio">
     <meta name="keywords" content="curso, de, html, udemy">
     <link rel="stylesheet" type="text/css" href="/assets/css/styles.css">
-    <script type="module" src="/assets/js/app.js"></script>
+    <script type="module" src="/assets/js/app.js?v=10"></script>
   </head>
-  <body class="signin">
+  <body class="vaccine">
     <div id="app">
-      <div page="sign-in">
+      <div page="vaccine">
         <header class="header">
-          <a class="logo" href="index.html">
+          <a class="logo" href="vaccine.html">
             <img src="/assets/images/icon-vaccine.png" alt="logo" />
             <span>MyHealth</span>
           </a>
           <nav class="navbar">
             <ul>
               <li>
-                <a class="button shadow" href="signin.html">
+                <a class="button shadow" href="vaccine.html">
                   Minhas vacinas
                 </a>
               </li>
               <li>
-                <a class="button shadow" href="signin.html">
+                <a class="button shadow" href="#logout">
                   Logout
                 </a>
               </li>
             </ul>
           </nav>
         </header>
-        <main class="container-fluid block">
+        <main class="container-fluid block add-vaccine">
           <section class="section-vaccine">
             <form class="form-section" method="POST" action="#">
               <div class="form-group">
-                <input class="search-input" type="text" name="search" placeholder="Pesquisa Vacina..." />
+                <input class="search-input" type="text" name="search" placeholder="PESQUISAR VACINA..." />
               </div>
             </form>
           </section>
           <div class="container">
             <section class="cards container margin-top-10">
-              <div class="card">
+              <!-- <div class="card">
                 <article>
                   <header>
                     <h2>BCG</h2>
@@ -58,43 +58,14 @@
                     Teste
                   </footer>
                 </article>
-              </div>
-              <div class="card">
-                <article>
-                  <header>
-                    <h2>BCG</h2>
-                  </header>
-                  <main>
-                    <div class="dose">Dose única</div>
-                    <span>11/06/2022</span>
-                    <div class="image">
-                      <img src="/assets/images/image-comprovante.png" alt="logo" />
-                    </div>
-                  </main>
-                  <footer>
-                    Teste
-                  </footer>
-                </article>
-              </div>
-              <div class="card">
-                <article>
-                  <header>
-                    <h2>BCG</h2>
-                  </header>
-                  <main>
-                    <div class="dose">Dose única</div>
-                    <span>11/06/2022</span>
-                    <div class="image">
-                      <img src="/assets/images/image-comprovante.png" alt="logo" />
-                    </div>
-                  </main>
-                  <footer>
-                    Teste
-                  </footer>
-                </article>
-              </div>
+              </div> -->
             </section>
           </div>
+          <footer class="vaccine-button">
+            <button href="#add-vaccine" class="form-button">
+              Nova vacina
+            </button>
+          </footer>
         </main>
       </div>
     </div>

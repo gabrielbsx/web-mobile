@@ -7,7 +7,7 @@
     <meta name="description" content="primeiro desáfio">
     <meta name="keywords" content="curso, de, html, udemy">
     <link rel="stylesheet" type="text/css" href="/assets/css/styles.css">
-    <script type="module" src="/assets/js/app.js"></script>
+    <script type="module" src="/assets/js/app.js?v=10"></script>
   </head>
   <body class="signup">
     <div id="app">
@@ -20,7 +20,8 @@
         </header>
         <main>
           <section class="section-form">
-            <form onsubmit="signUpHandle(event);">
+            <div>
+            <!-- <form onsubmit="signUpHandle(event);"> -->
               <div class="input-group">
                   <label for="nome">Nome completo</label>
                   <input id="nome" type="text" name="nome" placeholder="Jurandir Pereira" />
@@ -54,11 +55,12 @@
                 <!-- <small class="text-error">E-mail e/ou senha inválidos.</small> -->
               </div>
               <div class="input-group input-center">
-                <button class="form-button" type="submit">
+                <button href="#signup" class="form-button">
                   Cadastrar
                 </button>
               </div>
-            </form>
+            <!-- </form> -->
+            </div>
           </section>
         </main>
       </div>

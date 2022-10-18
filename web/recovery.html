@@ -7,7 +7,7 @@
     <meta name="description" content="primeiro desáfio">
     <meta name="keywords" content="curso, de, html, udemy">
     <link rel="stylesheet" type="text/css" href="/assets/css/styles.css">
-    <script type="module" src="/assets/js/app.js"></script>
+    <script type="module" src="/assets/js/app.js?v=10"></script>
   </head>
   <body class="recovery">
     <div id="app">
@@ -20,7 +20,8 @@
         </header>
         <main>
           <section class="section-form">
-            <form onsubmit="recoveryHandle(event);">
+            <div>
+            <!-- <form onsubmit="recoveryHandle(event);"> -->
               <div class="input-group">
                   <label>E-mail</label>
                   <input type="email" name="email" placeholder="jurandir.pereira@hotmail.com" />
@@ -29,11 +30,12 @@
                 <!-- <small class="text-error">E-mail e/ou senha inválidos.</small> -->
               </div>
               <div class="input-group input-submit input-center">
-                <button class="form-button" type="submit">
+                <button href="#forget" class="form-button">
                   Redifinir senha
                 </button>
               </div>
-            </form>
+            <!-- </form> -->
+            </div>
           </section>
         </main>
       </div>
