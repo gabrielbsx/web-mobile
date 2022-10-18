@@ -7,6 +7,7 @@
     <meta name="description" content="primeiro desáfio">
     <meta name="keywords" content="curso, de, html, udemy">
     <link rel="stylesheet" type="text/css" href="/assets/css/styles.css">
+    <script type="module" src="/assets/js/app.js"></script>
   </head>
   <body class="signin">
     <div id="app">
@@ -16,6 +17,20 @@
             <img src="/assets/images/icon-vaccine.png" alt="logo" />
             <span>MyHealth</span>
           </a>
+          <nav class="navbar">
+            <ul>
+              <li>
+                <a class="button shadow" href="signin.html">
+                  Minhas vacinas
+                </a>
+              </li>
+              <li>
+                <a class="button shadow" href="signin.html">
+                  Logout
+                </a>
+              </li>
+            </ul>
+          </nav>
         </header>
         <main class="container-fluid block">
           <section class="section-vaccine">
@@ -25,49 +40,63 @@
               </div>
             </form>
           </section>
-          <section class="cards container margin-top-10">
-            <div class="card">
-              <article>
-                <header>
-                  <h2>BCG</h2>
-                  <div>Dose única</div>
-                  <span>11/06/2022</span>
-                </header>
-                <main>
-                  Teste
-                </main>
-              </article>
-            </div>
-            <div class="card">
-              <article>
-                <header>
-                  <h4>BCG</h4>
-                  <div>Dose única</div>
-                  <span>11/06/2022</span>
-                </header>
-                <main>
-                  Teste
-                </main>
-              </article>
-            </div>
-            <div class="card">
-              <article>
-                <header>
-                  Cabeçalho
-                </header>
-                <main>
-                  Teste
-                </main>
-              </article>
-            </div>
-          </section>
+          <div class="container">
+            <section class="cards container margin-top-10">
+              <div class="card">
+                <article>
+                  <header>
+                    <h2>BCG</h2>
+                  </header>
+                  <main>
+                    <div class="dose">Dose única</div>
+                    <span>11/06/2022</span>
+                    <div class="image">
+                      <img src="/assets/images/image-comprovante.png" alt="logo" />
+                    </div>
+                  </main>
+                  <footer>
+                    Teste
+                  </footer>
+                </article>
+              </div>
+              <div class="card">
+                <article>
+                  <header>
+                    <h2>BCG</h2>
+                  </header>
+                  <main>
+                    <div class="dose">Dose única</div>
+                    <span>11/06/2022</span>
+                    <div class="image">
+                      <img src="/assets/images/image-comprovante.png" alt="logo" />
+                    </div>
+                  </main>
+                  <footer>
+                    Teste
+                  </footer>
+                </article>
+              </div>
+              <div class="card">
+                <article>
+                  <header>
+                    <h2>BCG</h2>
+                  </header>
+                  <main>
+                    <div class="dose">Dose única</div>
+                    <span>11/06/2022</span>
+                    <div class="image">
+                      <img src="/assets/images/image-comprovante.png" alt="logo" />
+                    </div>
+                  </main>
+                  <footer>
+                    Teste
+                  </footer>
+                </article>
+              </div>
+            </section>
+          </div>
         </main>
       </div>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-analytics-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
-    <script src="/assets/js/app.js"></script>
   </body>
 </html>

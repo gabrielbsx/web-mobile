@@ -120,6 +120,7 @@ body.home:before {
 
 .navbar ul {
   list-style: none;
+  display: flex;
 }
 
 .navbar ul li {
@@ -222,19 +223,19 @@ section > .section-title {
 }
 
 .input-error {
-  position: absolute;
   display: flex;
-  left: 0;
   flex-direction: row;
-  margin-top: 0;
   margin-bottom: 20px;
-  width: 100vw;
   justify-content: center;
 }
 
 .text-error {
   color: #FD7979;
   font-size: 16px;
+}
+
+.input-button {
+  display: 'flex';
 }
 
 .forget-password {
@@ -321,7 +322,7 @@ input[type="radio"]:checked {
 
 .search-input {
   flex-direction: row;
-  border: 1px solid black;
+  border: 0;
   padding: 10px 10px 10px 60px;
   width: 100%;
   font-size: 14pt;
@@ -341,22 +342,80 @@ input[type="radio"]:checked {
 }
 
 .container {
-  margin-left: 100px;
-  margin-right: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cards {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 50px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 80px;
+  width: 50%;
 }
 
 .card {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
   background: white;
-  padding: 10px 20px;
+  padding: 15px;
+  padding-bottom: 5px;
   border-radius: 10px;
 }
 
+.card > article {
+  display: flex;
+  flex-direction: column;
+}
+
+.card > article > header {
+  display: flex;
+  justify-content: center;
+}
+
 .card > article > header > h2 {
+  display: flex;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: normal;
   color: #3F92C5;
+  margin: 0;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.card > article > main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card > article > main > .dose {
+  background-color: #3F92C5;
+  color: white;
+  padding: 3px 20px;
+}
+
+.card > article > main > span {
+  margin-top: 5px;
+  color: #8B8B8B;
+  margin-bottom: 10px;
+}
+
+.card > article > footer {
+  display: flex;
+  margin-top: 15px;
+  color: #FD7979;
+  justify-content: flex-end;
+}
+
+.card > article > main > .image {
+  display: flex;
+  justify-content: center;
+}
+
+.card > article > main > .image > img {
+  object-fit: cover;
+  object-position: center;
 }

@@ -7,6 +7,7 @@
     <meta name="description" content="primeiro desáfio">
     <meta name="keywords" content="curso, de, html, udemy">
     <link rel="stylesheet" type="text/css" href="/assets/css/styles.css">
+    <script type="module" src="/assets/js/app.js"></script>
   </head>
   <body class="signin">
     <div id="app">
@@ -19,24 +20,26 @@
         </header>
         <main>
           <section class="section-form">
-            <form onsubmit="signInHandle(event);">
+            <!-- <form method="POST" onsubmit="signInHandle(event);"> -->
+            <div>
               <div class="input-group">
                 <label for="email">E-mail</label>
-                <input id="email" type="email" name="email" placeholder="jurandir.pereira@hotmail.com" />
+                <input id="email" value="jovemmestre@gmail.com" type="email" name="email" placeholder="jurandir.pereira@hotmail.com" />
               </div>
               <div class="input-group">
                 <label for="senha">Senha</label>
-                <input id="senha" type="password" name="password" placeholder="************" />
+                <input id="senha" value="jovemmestre" type="password" name="password" placeholder="************" />
               </div>
               <div class="input-group input-error">
                 <!-- <small class="text-error">E-mail e/ou senha inválidos.</small> -->
               </div>
-              <div>
-                <button class="form-button" type="submit">
+              <div class="input-group input-button">
+                <button class="form-button">
                   Entrar
                 </button>
               </div>
-            </form>
+            </div>
+            <!-- </form> -->
             <div class="forget-password">
               <a href="recovery.html">Esqueci minha senha</a>
             </div>
@@ -44,10 +47,5 @@
         </main>
       </div>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-analytics-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
-    <script src="/assets/js/app.js"></script>
   </body>
 </html>
