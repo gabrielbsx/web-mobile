@@ -14,8 +14,10 @@ import iconCalendar from '../../assets/images/icon-calendar.png';
 import styles from './styles';
 import HeaderGuest from '../../components/header-guest';
 import {SignUpController} from '../../controllers/signup-controller';
+import {useDispatch} from 'react-redux';
+import {reducerSetUser} from '../../hooks/user-slice';
 
-function SignUp({navigation, setUser}) {
+function SignUp({navigation}) {
   const [name, setName] = useState();
   const [gender, setGender] = useState();
   const [born, setBorn] = useState(new Date());
@@ -24,6 +26,7 @@ function SignUp({navigation, setUser}) {
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [picker, setPicker] = useState(false);
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
 
   const onHandleSubmit = async () => {
     const signUpController = new SignUpController();
@@ -37,7 +40,13 @@ function SignUp({navigation, setUser}) {
       setError('');
       signUpController.validateOrThrow();
       const {user} = await signUpController.handle();
-      setUser(user);
+      dispatch(
+        reducerSetUser({
+          id: user.uid,
+          email: user.email,
+          name: user.displayName,
+        }),
+      );
     } catch (e) {
       setError(
         e.message.includes('Firebase')
