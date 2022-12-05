@@ -1,7 +1,12 @@
 import {initializeApp} from 'firebase/app';
-import {initializeAuth} from 'firebase/auth';
-import {getFirestore, setLogLevel} from 'firebase/firestore';
+import {getAuth} from 'firebase/auth';
+import {
+  getFirestore,
+  initializeFirestore,
+  setLogLevel,
+} from 'firebase/firestore';
 import {getReactNativePersistence} from 'firebase/auth/react-native';
+import {getStorage} from 'firebase/storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const firebaseConfig = {
@@ -14,10 +19,13 @@ const firebaseConfig = {
   measurementId: 'G-MP2C7X9YC4',
 };
 
-export const app = initializeApp(firebaseConfig);
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage),
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
 });
-export const db = getFirestore(app);
+const storage = getStorage(app);
 
-setLogLevel('debug');
+export {app, auth, db, storage};
+
+//setLogLevel('debug');
