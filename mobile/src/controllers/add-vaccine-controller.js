@@ -1,12 +1,16 @@
 import {addDoc, collection, runTransaction} from 'firebase/firestore';
-import {auth, db} from '../services/firebase';
+import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
+import {auth, db, storage} from '../services/firebase';
 
 export default class AddVaccineController {
   name;
   dose;
   proof;
+  pathProof;
   nextDateDose;
   date;
+  latitude;
+  longitude;
 
   requiredFields = [];
   fieldsTranslate = [];
@@ -34,8 +38,20 @@ export default class AddVaccineController {
     this.proof = proof;
   }
 
+  setPathProof(pathProof) {
+    this.pathProof = pathProof;
+  }
+
   setNextDateDose(nextDateDose) {
     this.nextDateDose = nextDateDose;
+  }
+
+  setLatitude(latitude) {
+    this.latitude = latitude;
+  }
+
+  setLongitude(longitude) {
+    this.longitude = longitude;
   }
 
   setDate(date) {
@@ -65,27 +81,34 @@ export default class AddVaccineController {
       throw new Error('Usuário não autenticado');
     }
 
-    const idRandomByTimestamp =
-      Date.now().toString(36) + Math.random().toString(36);
+    const image = await fetch(this.proof);
+    const blob = await image.blob();
+    const pathWithFileName = `vaccines/${this.proof.split('/').pop()}`;
 
-    const vaccine = {
-      id: idRandomByTimestamp,
-      name: this.name,
-      dose: this.dose,
-      proof: this.proof,
-      nextDateDose: this.nextDateDose,
-      date: this.date,
-      userId: userAuthenticate.uid,
-    };
-    // await runTransaction(db, async transaction => {
-    //   const vaccineRef = await addDoc(collection(db, 'vaccines'), vaccine);
-    //   const userRef = collection(db, 'users').doc(userAuthenticate.uid);
-    //   const userDoc = await transaction.get(userRef);
-    //   const vaccines = userDoc.data().vaccines || [];
-    //   vaccines.push(vaccineRef.id);
-    //   transaction.update(userRef, {vaccines});
-    // });
+    try {
+      const uploadedImage = await uploadBytes(
+        ref(storage, pathWithFileName),
+        blob,
+      );
 
-    return vaccine;
+      const url = await getDownloadURL(uploadedImage.ref);
+
+      const vaccine = {
+        name: this.name,
+        dose: this.dose,
+        proof: url,
+        pathProof: pathWithFileName,
+        nextDateDose: this.nextDateDose,
+        date: this.date,
+        userId: userAuthenticate.uid,
+        latitude: this.latitude,
+        longitude: this.longitude,
+      };
+      const vaccineAdded = await addDoc(collection(db, 'vaccines'), vaccine);
+      return vaccineAdded;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
 }

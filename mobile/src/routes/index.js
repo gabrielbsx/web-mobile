@@ -12,7 +12,6 @@ import Home from '../screens/home';
 import SignUp from '../screens/signup';
 import SignIn from '../screens/signin';
 import ForgetPassword from '../screens/forget-password';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -26,32 +25,51 @@ import {getAuth, onAuthStateChanged, signOut} from 'firebase/auth';
 import {app, auth} from '../services/firebase';
 import EditVaccine from '../screens/edit-vaccine';
 import NextVaccines from '../screens/next-vaccines';
+import {useDispatch, useSelector} from 'react-redux';
+import {reducerSetUser} from '../hooks/user-slice';
 
 const Drawer = createDrawerNavigator();
 
 function Navigator() {
-  const [user, setUser] = useState(null);
-  const [vaccine, setVaccine] = useState([]);
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.user);
 
   useEffect(() => {
-    // const userData = AsyncStorage.getItem('user');
     onAuthStateChanged(auth, user => {
       if (user) {
-        setUser(user);
+        dispatch(
+          reducerSetUser({
+            id: user.uid,
+            email: user.email,
+            name: user.displayName,
+          }),
+        );
       } else {
-        setUser(null);
+        dispatch(
+          reducerSetUser({
+            id: null,
+            email: null,
+            name: null,
+          }),
+        );
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onHandleSignOut = ({navigation}) => {
-    setUser(null);
-    AsyncStorage.removeItem('user');
+    dispatch(
+      reducerSetUser({
+        id: null,
+        email: null,
+        name: null,
+      }),
+    );
     signOut(auth);
     navigation.closeDrawer();
   };
 
-  if (user) {
+  if (user && user?.email) {
     return (
       <NavigationContainer>
         <Drawer.Navigator
@@ -67,7 +85,7 @@ function Navigator() {
             <DrawerContentScrollView style={styles.drawer} {...props}>
               <View style={styles.labelUsername}>
                 <Text style={styles.username}>
-                  Olá {user.displayName ?? 'Anônimo'}
+                  Olá {user.name ?? 'Anônimo'}
                 </Text>
               </View>
               {props.state.routeNames.map((route, index) => {
@@ -126,13 +144,7 @@ function Navigator() {
                   backgroundColor: '#C1E7E3',
                 },
               }}>
-              {props => (
-                <route.component
-                  {...props}
-                  vaccines={vaccine.filter(vac => vac.userId === user.uid)}
-                  setVaccine={setVaccine}
-                />
-              )}
+              {props => <route.component {...props} />}
             </Drawer.Screen>
           ))}
         </Drawer.Navigator>
@@ -149,10 +161,10 @@ function Navigator() {
           headerShown: false,
         }}>
         <Drawer.Screen name="SignIn" options={{headerShown: false}}>
-          {props => <SignIn {...props} setUser={setUser} />}
+          {props => <SignIn {...props} />}
         </Drawer.Screen>
         <Drawer.Screen name="SignUp" options={{headerShown: false}}>
-          {props => <SignUp {...props} setUser={setUser} />}
+          {props => <SignUp {...props} />}
         </Drawer.Screen>
         <Drawer.Screen name="ForgetPassword" options={{headerShown: false}}>
           {props => <ForgetPassword {...props} />}

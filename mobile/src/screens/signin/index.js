@@ -14,11 +14,14 @@ import iconVaccine from '../../assets/images/icon-vaccine.png';
 import styles from './styles';
 import LinearGradient from 'react-native-linear-gradient';
 import SignInController from '../../controllers/signin-controller';
+import {useDispatch} from 'react-redux';
+import {reducerSetUser} from '../../hooks/user-slice';
 
-function SignIn({navigation, setUser}) {
+function SignIn({navigation}) {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [error, setError] = useState();
+  const dispatch = useDispatch();
 
   const onHandleSubmit = async () => {
     const signInController = new SignInController();
@@ -28,7 +31,12 @@ function SignIn({navigation, setUser}) {
       setError('');
       signInController.validateOrThrow();
       const {user} = await signInController.handle();
-      setUser(user);
+      dispatch(
+        reducerSetUser({
+          id: user.uid,
+          email: user.email,
+        }),
+      );
     } catch (e) {
       console.log(e);
       setError(e.message);

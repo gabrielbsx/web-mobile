@@ -3,6 +3,7 @@ import {
   Button,
   Image,
   ImageBackground,
+  Linking,
   SafeAreaView,
   ScrollView,
   Text,
@@ -16,8 +17,11 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import vaccineProof from '../../assets/images/image-comprovante.png';
 import {launchImageLibrary} from 'react-native-image-picker';
 import AddVaccineController from '../../controllers/add-vaccine-controller';
+import {addDoc, collection} from 'firebase/firestore';
+import Geolocation from '@react-native-community/geolocation';
+import MapView, {Marker} from 'react-native-maps';
 
-function AddVaccine({navigation, vaccines, setVaccine}) {
+function AddVaccine({navigation}) {
   const [name, setName] = useState();
   const [dose, setDose] = useState();
   const [proof, setProof] = useState();
@@ -25,7 +29,40 @@ function AddVaccine({navigation, vaccines, setVaccine}) {
   const [nextDateDose, setNextDateDose] = useState();
   const [picker, setPicker] = useState(false);
   const [error, setError] = useState();
-  // const [addVaccine, setAddVaccine] = useState();
+  const [longitude, setLongitude] = useState(0);
+  const [latitude, setLatitude] = useState(0);
+  const [map, setMap] = useState(false);
+
+  const getLocation = () => {
+    Geolocation.getCurrentPosition(position => {
+      setLatitude(position.coords.latitude);
+      setLongitude(position.coords.longitude);
+    });
+  };
+
+  useEffect(() => {
+    Geolocation.watchPosition(
+      position => {
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+      },
+      error => {
+        console.error(error);
+      },
+      {
+        distanceFilter: 1,
+      },
+    );
+
+    getLocation();
+    // Linking.openURL('https://maps.google.com/?q=' + latitude + ',' + longitude);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const onHandleMap = event => {
+    setLatitude(event.nativeEvent.coordinate.latitude);
+    setLongitude(event.nativeEvent.coordinate.longitude);
+  };
 
   const onHandleUploadImage = async (setImage, image) => {
     launchImageLibrary({mediaType: 'photo'}, response => {
@@ -63,8 +100,9 @@ function AddVaccine({navigation, vaccines, setVaccine}) {
       addVaccine.setProof(proof);
       addVaccine.setDate(date);
       addVaccine.setNextDateDose(nextDateDose);
-      const vaccine = await addVaccine.add();
-      setVaccine([...vaccines, vaccine]);
+      addVaccine.setLatitude(latitude);
+      addVaccine.setLongitude(longitude);
+      await addVaccine.add();
       navigation.navigate('Home');
     } catch (e) {
       setError(e.message);
@@ -186,7 +224,6 @@ function AddVaccine({navigation, vaccines, setVaccine}) {
                     color="#419ED7"
                   />
                 </View>
-                {/* <Image */}
                 <ImageBackground
                   style={proof ? styles.proofImage : null}
                   resizeMode="cover"
@@ -232,6 +269,35 @@ function AddVaccine({navigation, vaccines, setVaccine}) {
                   onTouchCancel={() => setPicker(false)}
                   onConfirm={() => setPicker(false)}
                 />
+              )}
+            </View>
+            <View style={{padding: 10, marginBottom: -50}}>
+              <Button
+                onPress={() => setMap(!map)}
+                title={!map ? 'Abrir Mapa' : 'Fechar Mapa'}
+                color="#419ED7"
+              />
+              {map && (
+                <MapView
+                  onPress={event => onHandleMap(event)}
+                  loadingEnabled={true}
+                  region={{
+                    latitude: latitude,
+                    longitude: longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                  }}
+                  style={{height: 180, marginTop: 10, borderRadius: 100}}>
+                  <Marker
+                    coordinate={{
+                      latitude: latitude,
+                      longitude: longitude,
+                    }}
+                    pinColor="#49B976"
+                    title="Localização"
+                    description="Localização da vacinação"
+                  />
+                </MapView>
               )}
             </View>
           </View>

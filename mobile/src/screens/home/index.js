@@ -1,30 +1,31 @@
 import React, {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  Button,
-  FlatList,
-  ImageBackground,
-  SafeAreaView,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import {Button, FlatList, ImageBackground, TextInput, View} from 'react-native';
 import styles from './styles';
 import {app, auth, db} from '../../services/firebase';
-import {doc, runTransaction} from 'firebase/firestore';
-import VaccineProofImage from '../../assets/images/image-comprovante.png';
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from 'firebase/firestore';
 import SearchIcon from '../../assets/images/icon-search.png';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import CardVaccine from '../../components/card';
+import {useDispatch, useSelector} from 'react-redux';
+import {reducerSetVaccine} from '../../hooks/vaccine-slice';
 
-function Home({navigation, vaccines, setVaccine}) {
+function Home({navigation}) {
   const [vaccineSearch, setVaccineSearch] = useState([]);
   const [textSearch, setTextSearch] = useState('');
+  const [vaccines, setVaccine] = useState([]);
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.user);
 
   const onHandleEdit = id => {
-    navigation.navigate('EditVaccine', {vaccineId: id});
+    dispatch(reducerSetVaccine({id}));
+    navigation.navigate('EditVaccine');
   };
 
   const onHandleSearch = text => {
@@ -37,7 +38,27 @@ function Home({navigation, vaccines, setVaccine}) {
 
   useEffect(() => {
     onHandleSearch(textSearch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vaccines]);
+
+  useEffect(() => {
+    const q = query(collection(db, 'vaccines'), where('userId', '==', user.id));
+    const unsubscribe = onSnapshot(q, snapshot => {
+      const vaccines = [];
+      snapshot.forEach(doc => {
+        const vaccine = doc.data();
+        vaccines.push({
+          ...doc.data(),
+          id: doc.id,
+          date: vaccine.date?.toDate(),
+          nextDateDose: vaccine.nextDateDose?.toDate(),
+        });
+      });
+      setVaccine(vaccines);
+    });
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -64,7 +85,6 @@ function Home({navigation, vaccines, setVaccine}) {
       </View>
       <FlatList
         style={styles.list}
-        // ListHeaderComponent={}
         data={vaccineSearch.length && !!textSearch ? vaccineSearch : vaccines}
         renderItem={({item}) => (
           <CardVaccine onHandleEdit={onHandleEdit} item={item} key={item.id} />
@@ -75,13 +95,6 @@ function Home({navigation, vaccines, setVaccine}) {
         onEndReached={() => {
           console.log('onEndReached');
         }}
-        // ListFooterComponent={() => {
-        //   return (
-        //     <View style={styles.spinner}>
-        //       <ActivityIndicator size="large" color="#3F92C5" />
-        //     </View>
-        //   );
-        // }}
       />
       <View style={styles.containerButton}>
         <Button

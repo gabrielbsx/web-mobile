@@ -1,12 +1,18 @@
-import {addDoc, collection, runTransaction} from 'firebase/firestore';
-import {auth, db} from '../services/firebase';
+import {updateDoc, collection, doc} from 'firebase/firestore';
+import {ref, uploadBytes} from 'firebase/storage';
+import {auth, db, storage} from '../services/firebase';
 
 export default class EditVaccineController {
+  id;
   name;
   dose;
   proof;
+  proofOld;
   nextDateDose;
+  pathProof;
   date;
+  latitude;
+  longitude;
 
   requiredFields = [];
   fieldsTranslate = [];
@@ -22,8 +28,16 @@ export default class EditVaccineController {
     };
   }
 
+  setId(id) {
+    this.id = id;
+  }
+
   setName(name) {
     this.name = name;
+  }
+
+  setPathProof(pathProof) {
+    this.pathProof = pathProof;
   }
 
   setDose(dose) {
@@ -40,6 +54,14 @@ export default class EditVaccineController {
 
   setDate(date) {
     this.date = date;
+  }
+
+  setLatitude(latitude) {
+    this.latitude = latitude;
+  }
+
+  setLongitude(longitude) {
+    this.longitude = longitude;
   }
 
   async edit() {
@@ -65,14 +87,32 @@ export default class EditVaccineController {
       throw new Error('Usuário não autenticado');
     }
 
+    if (this.proof.includes('firebasestorage')) {
+      console.log('yup');
+    }
+
+    const image = await fetch(this.proof);
+    const blob = await image.blob();
+
+    await uploadBytes(ref(storage, this.pathProof), blob);
+
     const vaccine = {
       name: this.name,
       dose: this.dose,
       proof: this.proof,
       nextDateDose: this.nextDateDose,
       date: this.date,
+      pathProof: this.pathProof,
+      latitude: this.latitude,
+      longitude: this.longitude,
     };
 
-    return vaccine;
+    try {
+      const vaccineUpdated = updateDoc(doc(db, 'vaccines', this.id), vaccine);
+      return vaccineUpdated;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
 }

@@ -8,7 +8,6 @@ function NextVaccines({navigation, vaccines, setVaccine}) {
     <View style={styles.container}>
       <FlatList
         style={styles.list}
-        // ListHeaderComponent={}
         data={vaccines}
         renderItem={({item}) => <CardNextVaccine item={item} key={item.id} />}
         keyExtractor={item => item.id}

@@ -6,7 +6,6 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import {addDoc, collection, runTransaction} from 'firebase/firestore';
-import '@firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class SignUpController extends FormValidation {
@@ -74,19 +73,6 @@ export class SignUpController extends FormValidation {
     updateProfile(userAuthenticate.user, {
       displayName: this.name,
     });
-    // runTransaction(db, async transaction => {
-    //   const docRef = collection(db, 'users', userAuthenticate.user.uid);
-    //   const docSnap = await transaction.get(docRef);
-    //   if (!docSnap.exists()) {
-    //     transaction.set(docRef, {
-    //       name: this.name,
-    //       email: this.email,
-    //       gender: this.gender,
-    //       born: this.born,
-    //     });
-    //   }
-    // });
-    AsyncStorage.setItem('user', JSON.stringify(userAuthenticate.user));
     return userAuthenticate;
   };
 }
