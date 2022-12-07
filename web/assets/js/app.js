@@ -6,8 +6,21 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
 } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  orderBy,
+  getDocs,
+  deleteDoc,
+  updateDoc,
+  query,
+  where,
+} from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
-import { app, auth } from "../../assets/js/config.js";
+import { app, auth, db } from "../../assets/js/config.js";
 
 const nameValidation = (name) => name.length > 1;
 const genderValidation = (gender) =>
@@ -16,7 +29,7 @@ const passwordConfirmation = (password, passwordConfirm) =>
   password === passwordConfirm;
 const bornValidation = (born) => born < new Date();
 const emailValidation = (email) =>
-  email.match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/);
+  true
 
 const setMessageError = (message) => {
   const errorDiv = document.querySelector("div.input-error");
@@ -98,28 +111,24 @@ const signUpHandle = (event) => {
     return;
   }
 
+  var profile = {
+    ...user,
+  };
+
   createUserWithEmailAndPassword(auth, email, password)
-    .then((credential) => {
-      updateProfile(credential.user, {
-        displayName: name,
-      });
-      // db.collection("users")
-      //   .doc(credential.user.uid)
-      //   .set({
-      //     displayName: name,
-      //     gender: user.gender,
-      //     born: user.born,
-      //   })
-      //   .then((data) => {
-      //     console.log(data);
-      //   })
-      //   .catch((error) => {
-      //     console.log("error");
-      //   });
-      alert("Conta criada com sucesso!");
-    })
-    .then(() => {
-      window.location.pathname = "/vaccine.html";
+    .then(async (credential) => {
+      try {
+        await updateProfile(credential.user, {
+          displayName: name,
+        });
+        await addDoc(collection(db, "profiles"), {
+          ...profile,
+          userId: credential.user.uid,
+        });
+        window.location.pathname = "/vaccine.html";
+      } catch (error) {
+        setMessageError("Houve algum erro ao efetuar o cadastro");
+      }
     })
     .catch((error) => {
       console.log(error);
@@ -204,22 +213,23 @@ const cardDom = (vaccine) => {
   card.classList.add("card");
   card.classList.add("card-vaccine-handle");
   card.setAttribute("data-id", vaccine.id);
-  card.addEventListener("click", (event) =>
+  card.addEventListener("click", (event) => {
     onHandleEditVaccine(event, vaccine.id)
+  }
   );
   dose.classList.add("dose");
   image.classList.add("image");
 
   h2.innerText = vaccine.name;
   dose.innerText = vaccine.dose;
-  date.innerText = vaccine.date.split("-").reverse().join("/");
+  date.innerText = vaccine.date.toLocaleDateString("pt-BR");
   img.src = vaccine.proof;
   img.alt = vaccine.name;
 
   if (vaccine.nextDateVaccine && vaccine.dose !== "Dose única") {
     const nextDateVaccineText =
       "Próxima dose em: " +
-      vaccine.nextDateVaccine.split("-").reverse().join("/");
+      vaccine.nextDateVaccine?.toLocaleDateString("pt-BR");
     footer.innerText = nextDateVaccineText;
   }
 
@@ -275,6 +285,7 @@ const onHandleAddVaccine = async (event) => {
       setMessageError("Data da próxima dose inválida");
       return;
     }
+    nextDateVaccine = new Date(nextDateVaccine);
   } else {
     nextDateVaccine = null;
   }
@@ -304,110 +315,138 @@ const onHandleAddVaccine = async (event) => {
     return;
   }
 
-  const vaccine = {
-    userId: auth.currentUser.uid,
-    name,
-    date,
-    dose: doseChecked,
-    nextDateVaccine,
-    proof: proofImage,
-  };
+  try {
+    const vaccine = {
+      userId: auth.currentUser.uid,
+      name,
+      date: new Date(date),
+      dose: doseChecked,
+      nextDateVaccine,
+      proof: proofImage,
+    };
 
-  const vaccines = JSON.parse(localStorage.getItem("vaccines")) || [];
-  vaccines.push(vaccine);
-  localStorage.setItem("vaccines", JSON.stringify(vaccines));
-  window.location.pathname = "/vaccine.html";
+    await addDoc(collection(db, "vaccines"), vaccine);
+    window.location.pathname = "/vaccine.html";
+  } catch (error) {
+    setMessageError(error.message);
+  }
 };
 
 const onHandleEditVaccine = async (event, vaccineId) => {
   event.preventDefault();
-  const pathname = "/edit-vaccine.html?id=" + (parseInt(vaccineId) + 1);
+  const pathname = "/edit-vaccine.html?id=" + vaccineId;
   window.location = pathname;
 };
 
 const onHandleEditVaccineInfo = async (event) => {
-  event.preventDefault();
-  const vaccineId = parseInt(window.location.search.split("=")[1]) - 1;
-  const vaccines = JSON.parse(localStorage.getItem("vaccines")) || [];
-  const vaccine = vaccines[vaccineId];
-  const date = document.querySelector('input[name="datevaccine"]').value;
-  const name = document.querySelector('input[name="vaccine"]').value;
-  const doses = document.querySelectorAll('input[name="dose"]');
-  const proof = document.querySelector('input[name="proof"]').files[0];
-  let nextDateVaccine = document.querySelector(
-    'input[name="nextdatevaccine"]'
-  ).value;
-
-  var doseChecked;
-
-  for (const dose of doses) {
-    if (dose.checked) {
-      doseChecked = dose.value;
+  onAuthStateChanged(auth, async (user) => {
+    event.preventDefault();
+    const vaccineId = window.location.search.split("=")[1];
+    let vaccine;
+    const q = query(collection(db, 'vaccines'), where('userId', '==', user.uid));
+    const snapshot = await getDocs(q);
+    for (const doc of snapshot.docs) {
+      const vac = {
+        id: doc.id,
+        ...doc.data(),
+      }
+      if (vac.id === vaccineId) {
+        vaccine = {
+          id: doc.id,
+          ...doc.data(),
+          date: vac.date?.toDate(),
+          nextDateVaccine: vac.nextDateVaccine?.toDate(),
+        };
+      }
     }
-  }
-
-  if (!dateValidate(date) || !date) {
-    setMessageError("Data de vacinação inválida");
-    return;
-  }
-
-  if (doseChecked !== "Dose única") {
-    if (!dateValidate(nextDateVaccine) || !nextDateVaccine) {
-      setMessageError("Data da próxima dose inválida");
+    if (!vaccine) {
+      window.location.pathname = "/vaccine.html";
       return;
     }
-  } else {
-    nextDateVaccine = null;
-  }
+    const date = document.querySelector('input[name="datevaccine"]').value;
+    const name = document.querySelector('input[name="vaccine"]').value;
+    const doses = document.querySelectorAll('input[name="dose"]');
+    const proof = document.querySelector('input[name="proof"]').files[0];
+    let nextDateVaccine = document.querySelector(
+      'input[name="nextdatevaccine"]'
+    ).value;
 
-  if (!name) {
-    setMessageError("Nome da vacina inválido");
-    return;
-  }
+    var doseChecked;
 
-  if (!dose) {
-    setMessageError("Dose inválida");
-    return;
-  }
+    for (const dose of doses) {
+      if (dose.checked) {
+        doseChecked = dose.value;
+      }
+    }
 
-  var proofImage;
-
-  if (proof) {
-    const fileReader = new FileReader();
-
-    fileReader.readAsDataURL(proof);
-
-    proofImage = await new Promise((resolve) => {
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      };
-    });
-  }
-
-  if (proofImage) {
-    if (!imageValidate(proof.name)) {
-      setMessageError("Formato de imagem inválido");
+    if (!dateValidate(date) || !date) {
+      setMessageError("Data de vacinação inválida");
       return;
     }
-  }
 
-  if (!proofImage && !vaccine.proof) {
-    setMessageError("Comprovante inválido");
-    return;
-  }
+    if (doseChecked !== "Dose única") {
+      if (!dateValidate(nextDateVaccine) || !nextDateVaccine) {
+        setMessageError("Data da próxima dose inválida");
+        return;
+      }
+      nextDateVaccine = new Date(nextDateVaccine);
+    } else {
+      nextDateVaccine = null;
+    }
 
-  const vaccineUpdated = {
-    userId: auth.currentUser.uid,
-    name,
-    date,
-    dose: doseChecked,
-    nextDateVaccine,
-    proof: proofImage || vaccine.proof,
-  };
+    if (!name) {
+      setMessageError("Nome da vacina inválido");
+      return;
+    }
 
-  vaccines[vaccineId] = vaccineUpdated;
-  localStorage.setItem("vaccines", JSON.stringify(vaccines));
-  window.location = "/vaccine.html";
+    if (!dose) {
+      setMessageError("Dose inválida");
+      return;
+    }
+
+    var proofImage;
+
+    if (proof) {
+      const fileReader = new FileReader();
+
+      fileReader.readAsDataURL(proof);
+
+      proofImage = await new Promise((resolve) => {
+        fileReader.onload = () => {
+          resolve(fileReader.result);
+        };
+      });
+    }
+
+    if (proofImage) {
+      if (!imageValidate(proof.name)) {
+        setMessageError("Formato de imagem inválido");
+        return;
+      }
+    }
+
+    if (!proofImage && !vaccine.proof) {
+      setMessageError("Comprovante inválido");
+      return;
+    }
+
+    const vaccineUpdated = {
+      userId: auth.currentUser.uid,
+      name,
+      date: new Date(date),
+      dose: doseChecked,
+      nextDateVaccine,
+      proof: proofImage || vaccine.proof,
+    };
+
+    try {
+      await updateDoc(doc(db, "vaccines", vaccineId), vaccineUpdated);
+
+      window.location = "/vaccine.html";
+    } catch (error) {
+      setMessageError(error.message);
+    }
+  });
 };
 
 const onHandleDeleteVaccine = async (event) => {
@@ -416,33 +455,58 @@ const onHandleDeleteVaccine = async (event) => {
 };
 
 const onHandleDeleteVaccineConfirm = async (event) => {
-  event.preventDefault();
-  const vaccineId = parseInt(window.location.search.split("=")[1]) - 1;
-  const vaccines = JSON.parse(localStorage.getItem("vaccines")) || [];
-  vaccines.splice(vaccineId, 1);
-  localStorage.setItem("vaccines", JSON.stringify(vaccines));
-  window.location = "/vaccine.html";
+  onAuthStateChanged(auth, async (user) => {
+    event.preventDefault();
+    const vaccineId = window.location.search.split("=")[1];
+    const q = query(collection(db, 'vaccines'), where('userId', '==', user.uid));
+    const snapshot = await getDocs(q);
+    for (const document of snapshot.docs) {
+      const vac = {
+        id: document.id,
+        ...document.data(),
+      }
+      if (vac.id === vaccineId) {
+        await deleteDoc(doc(db, "vaccines", vaccineId));
+      }
+    }
+    window.location = "/vaccine.html";
+  });
 };
 
 const onHandleSearch = async (event) => {
   event.preventDefault();
-  const search = document.querySelector('input[name="search"]').value;
-  const vaccines = JSON.parse(localStorage.getItem("vaccines")) || [];
-  const vaccinesFiltered = vaccines.filter((vaccine) =>
-    vaccine.name.toLowerCase().includes(search.toLowerCase())
-  );
-  const cards = document.querySelector(".cards");
-  cards.innerHTML = "";
-  vaccinesFiltered.forEach((vaccine, index) => {
-    if (vaccine.userId === auth.currentUser?.uid) {
-      const vaccineCard = cardDom(vaccine, index);
-      cards.appendChild(vaccineCard);
+  onAuthStateChanged(auth, async (user) => {
+    const search = document.querySelector('input[name="search"]').value;
+    const vaccines = [];
+    const q = query(collection(db, 'vaccines'), where('userId', '==', user.uid));
+    const snapshot = await getDocs(q);
+    for (const doc of snapshot.docs) {
+      const vac = {
+        id: doc.id,
+        ...doc.data(),
+      }
+      vaccines.push({
+        ...vac,
+        date: vac.date?.toDate(),
+        nextDateVaccine: vac.nextDateVaccine?.toDate(),
+      });
     }
+    const vaccinesFiltered = vaccines.filter((vaccine) =>
+      vaccine.name.toLowerCase().includes(search.toLowerCase())
+    );
+    const cards = document.querySelector(".cards");
+    cards.innerHTML = "";
+    vaccinesFiltered.forEach((vaccine, index) => {
+      if (vaccine.userId === user.uid) {
+        const vaccineCard = cardDom(vaccine, index);
+        cards.appendChild(vaccineCard);
+      }
+    });
   });
 };
 
 document.addEventListener("DOMContentLoaded", function () {
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     const guestPaths = [
       "/",
       "/index.html",
@@ -455,107 +519,133 @@ document.addEventListener("DOMContentLoaded", function () {
       "/edit-vaccine.html",
       "/vaccine.html",
     ];
+
     if (user && guestPaths.includes(window.location.pathname)) {
       window.location.pathname = "/vaccine.html";
       return;
     }
+
     if (!user && !guestPaths.includes(window.location.pathname)) {
       window.location.pathname = "/index.html";
       return;
     }
+
     if (window.location.pathname === "/vaccine.html") {
-      const vaccines = JSON.parse(localStorage.getItem("vaccines")) || [];
+      const vaccines = [];
+      const q = query(collection(db, 'vaccines'), where('userId', '==', user.uid));
+      const snapshot = await getDocs(q);
+      for (const doc of snapshot.docs) {
+        const vac = {
+          id: doc.id,
+          ...doc.data(),
+        }
+        vaccines.push({
+          ...vac,
+          date: vac.date?.toDate(),
+          nextDateVaccine: vac.nextDateVaccine?.toDate(),
+        });
+      }
       const cards = document.querySelector(".cards");
-      for (const [id, vaccine] of vaccines.entries()) {
+      for (const vaccine of vaccines) {
         if (!vaccine) {
           continue;
         }
-        if (vaccine.userId === auth.currentUser.uid) {
-          const card = cardDom({ ...vaccine, id });
-          cards.appendChild(card);
+        const card = cardDom({ ...vaccine });
+        cards.appendChild(card);
+      }
+    }
+
+    if (window.location.pathname === "/edit-vaccine.html") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const vaccineId = urlParams.get("id");
+      let vaccine = null;
+      const q = query(collection(db, 'vaccines'), where('userId', '==', user.uid));
+      const snapshot = await getDocs(q);
+      for (const doc of snapshot.docs) {
+        const vac = {
+          id: doc.id,
+          ...doc.data(),
+        }
+        if (vac.id === vaccineId) {
+          vaccine = {
+            ...vac,
+            date: vac.date?.toDate(),
+            nextDateVaccine: vac.nextDateVaccine?.toDate(),
+          }
         }
       }
-    }
-  });
 
-  if (window.location.pathname === "/edit-vaccine.html") {
-    const urlParams = new URLSearchParams(window.location.search);
-    const vaccineId = parseInt(urlParams.get("id"));
-    const vaccines = JSON.parse(localStorage.getItem("vaccines")) || [];
-    const vaccine = vaccines[vaccineId - 1];
-
-    console.log(vaccine);
-
-    if (!vaccineId || !vaccine) {
-      window.location = "/vaccine.html";
-    }
-
-    document.querySelector('input[name="datevaccine"]').value = vaccine.date;
-    document.querySelector('input[name="vaccine"]').value = vaccine.name;
-    document.querySelectorAll('input[name="dose"]').forEach((dose) => {
-      if (dose.value === vaccine.dose) {
-        dose.checked = true;
+      if (!vaccineId || !vaccine) {
+        window.location = "/vaccine.html";
       }
-    });
-    document.querySelector('input[name="nextdatevaccine"]').value =
-      vaccine.nextDateVaccine;
 
-    const proofImage = document.createElement("img");
-    proofImage.classList.add("image-preview");
-    proofImage.src = vaccine.proof;
-    proofImage.alt = vaccine.name;
-    document.querySelector(".image-preview-div").appendChild(proofImage);
-  }
+      document.querySelector('input[name="datevaccine"]').value = vaccine.date.toISOString().split("T")[0];
+      document.querySelector('input[name="vaccine"]').value = vaccine.name;
+      document.querySelectorAll('input[name="dose"]').forEach((dose) => {
+        if (dose.value === vaccine.dose) {
+          dose.checked = true;
+        }
+      });
+      document.querySelector('input[name="nextdatevaccine"]').value =
+        vaccine.nextDateVaccine?.toISOString()?.split("T")[0];
 
-  document
-    .querySelector('button[href="#signin"]')
-    ?.addEventListener("click", (event) => signInHandle(event));
-  document
-    .querySelector('button[href="#signup"]')
-    ?.addEventListener("click", (event) => signUpHandle(event));
-  document
-    .querySelector('button[href="#forget"]')
-    ?.addEventListener("click", (event) => recoveryHandle(event));
-  document
-    .querySelector('a[href="#logout"]')
-    ?.addEventListener("click", () => signOut(auth));
-  document
-    .querySelector('button[href="#add-vaccine"]')
-    ?.addEventListener("click", (event) => addVaccineHandle(event));
-  document
-    .querySelector('button[href="#addvaccine"]')
-    ?.addEventListener("click", (event) => onHandleAddVaccine(event));
-  document
-    .querySelector('button[href="#editvaccine"]')
-    ?.addEventListener("click", (event) => onHandleEditVaccineInfo(event));
-  document
-    .querySelector(".input-button-file")
-    ?.addEventListener("change", (event) => {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        const img = document.querySelector("img");
-        img.src = reader.result;
-        img.classList.add("image-preview");
-        document.querySelector(".image-preview-div").innerHTML = "";
-        document.querySelector(".image-preview-div").appendChild(img);
-      };
-    });
-  document
-    .querySelector('button[href="#deletevaccine"]')
-    ?.addEventListener("click", (event) =>
-      document.querySelector(".modal")?.classList.remove("hidden")
-    );
-  document
-    .querySelector("#cancel")
-    ?.addEventListener("click", (event) =>
-      document.querySelector(".modal")?.classList.add("hidden")
-    );
-  document
-    .querySelector("#deletevac")
-    ?.addEventListener("click", (event) => onHandleDeleteVaccineConfirm(event));
-  document
-    .querySelector(".search-input")
-    ?.addEventListener("keyup", (event) => onHandleSearch(event));
+      const proofImage = document.createElement("img");
+      proofImage.classList.add("image-preview");
+      proofImage.src = vaccine.proof;
+      proofImage.alt = vaccine.name;
+      document.querySelector(".image-preview-div").appendChild(proofImage);
+    }
+
+    document
+      .querySelector('button[href="#signin"]')
+      ?.addEventListener("click", (event) => signInHandle(event));
+    document
+      .querySelector('button[href="#signup"]')
+      ?.addEventListener("click", (event) => signUpHandle(event));
+    document
+      .querySelector('button[href="#forget"]')
+      ?.addEventListener("click", (event) => recoveryHandle(event));
+    document
+      .querySelector('a[href="#logout"]')
+      ?.addEventListener("click", () => signOut(auth));
+    document
+      .querySelector('button[href="#add-vaccine"]')
+      ?.addEventListener("click", (event) => addVaccineHandle(event));
+    document
+      .querySelector('button[href="#addvaccine"]')
+      ?.addEventListener("click", (event) => onHandleAddVaccine(event));
+    document
+      .querySelector('button[href="#editvaccine"]')
+      ?.addEventListener("click", (event) => onHandleEditVaccineInfo(event));
+    document
+      .querySelector(".input-button-file")
+      ?.addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          const img = document.querySelector("img");
+          img.src = reader.result;
+          img.classList.add("image-preview");
+          document.querySelector(".image-preview-div").innerHTML = "";
+          document.querySelector(".image-preview-div").appendChild(img);
+        };
+      });
+    document
+      .querySelector('button[href="#deletevaccine"]')
+      ?.addEventListener("click", (event) =>
+        document.querySelector(".modal")?.classList.remove("hidden")
+      );
+    document
+      .querySelector("#cancel")
+      ?.addEventListener("click", (event) =>
+        document.querySelector(".modal")?.classList.add("hidden")
+      );
+    document
+      .querySelector("#deletevac")
+      ?.addEventListener("click", (event) => onHandleDeleteVaccineConfirm(event));
+    document
+      .querySelector(".search-input")
+      ?.addEventListener("keyup", (event) => onHandleSearch(event));
+  });
 });
